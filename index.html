@@ -2,282 +2,409 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Climate Projection Thailand</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Climate Projection Thailand</title>
 
-  <style>
-    * { box-sizing: border-box; }
-
-    body {
-      margin: 0;
-      font-family: Tahoma, Arial, sans-serif;
-      background: #f1f5f9;
-      color: #233447;
-      line-height: 1.7;
-    }
-
-    header {
-      background: linear-gradient(135deg, #103c61, #087e8b);
-      color: white;
-      text-align: center;
-      padding: 42px 20px;
-    }
-
-    header h1 {
-      margin: 0 0 8px;
-      font-size: clamp(25px, 4vw, 38px);
-    }
-
-    header p { margin: 5px 0; }
-
-    .container {
-      width: min(1100px, 94%);
-      margin: 28px auto;
-    }
-
-    .card {
-      background: white;
-      padding: 24px;
-      margin-bottom: 22px;
-      border-radius: 14px;
-      box-shadow: 0 3px 14px #18334d12;
-    }
-
-    h2 { color: #126782; margin-top: 0; }
-
-    .notice {
-      background: #fff7df;
-      border-left: 5px solid #d59b20;
-      padding: 14px 18px;
-      border-radius: 8px;
-    }
-
-    .controls {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 16px;
-      margin: 20px 0;
-    }
-
-    label {
-      display: block;
-      font-weight: bold;
-      margin-bottom: 6px;
-    }
-
-    select {
-      width: 100%;
-      padding: 12px;
-      border: 1px solid #cbd5e1;
-      border-radius: 8px;
-      background: white;
-      font: inherit;
-    }
-
-    .map-frame {
-      background: #f8fafc;
-      border: 1px solid #dbe5ed;
-      border-radius: 10px;
-      padding: 10px;
-      text-align: center;
-      min-height: 180px;
-    }
-
-    #climateMap {
-      display: block;
-      width: 100%;
-      height: auto;
-      max-height: 780px;
-      object-fit: contain;
-      margin: auto;
-    }
-
-    #mapStatus {
-      color: #526575;
-      font-size: 14px;
-      overflow-wrap: anywhere;
-    }
-
-    .button {
-      display: inline-block;
-      padding: 10px 16px;
-      background: #126782;
-      color: white;
-      text-decoration: none;
-      border-radius: 8px;
-      margin-top: 12px;
-    }
-
-    footer {
-      text-align: center;
-      padding: 25px;
-      color: #64748b;
-    }
-
-    @media (max-width: 600px) {
-      .card { padding: 17px; }
-      header { padding: 30px 15px; }
-    }
-  </style>
+<style>
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: Tahoma, Arial, sans-serif;
+  background: #f1f5f9;
+  color: #233447;
+  line-height: 1.7;
+}
+header {
+  background: linear-gradient(135deg, #103c61, #087e8b);
+  color: white;
+  text-align: center;
+  padding: 38px 18px;
+}
+header h1 { margin: 0 0 8px; }
+.container { width: min(1100px, 94%); margin: 28px auto; }
+.card {
+  background: white;
+  padding: 24px;
+  margin-bottom: 22px;
+  border-radius: 14px;
+  box-shadow: 0 3px 14px #18334d12;
+}
+h2 { color: #126782; margin-top: 0; }
+.controls {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 15px;
+  margin: 18px 0;
+}
+label { display: block; font-weight: bold; margin-bottom: 6px; }
+select, input {
+  width: 100%;
+  padding: 11px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  background: white;
+  font: inherit;
+}
+.map-frame {
+  background: #f8fafc;
+  border: 1px solid #dbe5ed;
+  border-radius: 10px;
+  padding: 10px;
+  text-align: center;
+}
+#climateMap {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 780px;
+  object-fit: contain;
+}
+.status { color: #526575; font-size: 14px; overflow-wrap: anywhere; }
+.button {
+  display: inline-block;
+  padding: 10px 15px;
+  background: #126782;
+  color: white;
+  text-decoration: none;
+  border: 0;
+  border-radius: 8px;
+  cursor: pointer;
+  font: inherit;
+  margin: 5px 4px 5px 0;
+}
+.notice {
+  background: #fff7df;
+  border-left: 5px solid #d59b20;
+  padding: 14px 18px;
+  border-radius: 8px;
+}
+.table-wrap { overflow-x: auto; margin-top: 15px; }
+table { width: 100%; border-collapse: collapse; white-space: nowrap; }
+th, td { padding: 10px 12px; border-bottom: 1px solid #e2e8f0; text-align: left; }
+th { background: #eaf2f7; }
+tbody tr:hover { background: #f1f8fb; }
+#tableStatus { margin: 12px 0; }
+footer { text-align: center; padding: 24px; color: #64748b; }
+@media (max-width: 600px) {
+  .card { padding: 16px; }
+  header { padding: 28px 14px; }
+}
+</style>
 </head>
 
 <body>
-  <header>
-    <h1>Climate Projection Thailand</h1>
-    <p>ระบบแสดงผลการประเมินฝนของประเทศไทย</p>
-    <p>เดือนธันวาคม 2026 | WRF-Chem | SSP5-8.5</p>
-  </header>
+<header>
+  <h1>Climate Projection Thailand</h1>
+  <p>ระบบแสดงผลการประเมินฝนของประเทศไทย</p>
+  <p>ธันวาคม 2026 | WRF-Chem | SSP5-8.5</p>
+</header>
 
-  <main class="container">
+<main class="container">
 
-    <section class="card">
-      <h2>เกี่ยวกับโครงการ</h2>
-      <p>
-        เว็บไซต์สำหรับนำเสนอผลการประเมินปริมาณฝนและดัชนีฝน
-        จากข้อมูลแบบจำลองภูมิอากาศ เพื่อช่วยศึกษาพื้นที่ที่ควรเฝ้าระวัง
-        และสนับสนุนการวิเคราะห์ความเสี่ยงที่เกี่ยวข้องกับฝนหนัก
-      </p>
-    </section>
+<section class="card">
+  <h2>เกี่ยวกับโครงการ</h2>
+  <p>
+    เว็บไซต์นำเสนอผลการประเมินฝนจากข้อมูลแบบจำลอง
+    เพื่อช่วยศึกษาดัชนีฝนและพื้นที่ที่ควรติดตามด้านฝนหนัก
+  </p>
+</section>
 
-    <section class="card">
-      <h2>แผนที่ดัชนีฝนประเทศไทย</h2>
+<section class="card">
+  <h2>แผนที่ดัชนีฝนประเทศไทย</h2>
+  <p>เลือกดัชนีและวิธีสรุปผลเพื่อดูแผนที่ที่อัปโหลดไว้</p>
 
-      <p>
-        เลือกดัชนีฝนและวิธีสรุปผลเพื่อดูแผนที่ที่อัปโหลดไว้ในระบบ
-      </p>
+  <div class="controls">
+    <div>
+      <label for="indexSelect">ดัชนีฝน</label>
+      <select id="indexSelect">
+        <option value="RX3day">RX3day — ฝนสะสมสูงสุด 3 วัน</option>
+        <option value="RX5day">RX5day — ฝนสะสมสูงสุด 5 วัน</option>
+        <option value="RX7day">RX7day — ฝนสะสมสูงสุด 7 วัน</option>
+        <option value="R35mm">R35mm — จำนวนวันที่ฝน ≥ 35 มม.</option>
+        <option value="R20mm">R20mm — จำนวนวันที่ฝน ≥ 20 มม.</option>
+        <option value="R50mm">R50mm — จำนวนวันที่ฝน ≥ 50 มม.</option>
+        <option value="PRCPTOT">PRCPTOT — ปริมาณฝนรวม</option>
+        <option value="R95p">R95p — ดัชนีฝนหนัก</option>
+        <option value="R99p">R99p — ดัชนีฝนหนักมาก</option>
+        <option value="R95pTOT">R95pTOT — ปริมาณฝนจากวันฝนหนัก</option>
+      </select>
+    </div>
+    <div>
+      <label for="statSelect">วิธีสรุปผล</label>
+      <select id="statSelect">
+        <option value="MAX">MAX — ค่าสูงสุด</option>
+        <option value="P95">P95 — เปอร์เซ็นไทล์ที่ 95</option>
+      </select>
+    </div>
+  </div>
 
-      <div class="controls">
-        <div>
-          <label for="indexSelect">ดัชนีฝน</label>
-          <select id="indexSelect">
-            <option value="RX3day">RX3day — ฝนสะสมสูงสุด 3 วัน</option>
-            <option value="RX5day">RX5day — ฝนสะสมสูงสุด 5 วัน</option>
-            <option value="RX7day">RX7day — ฝนสะสมสูงสุด 7 วัน</option>
-            <option value="R35mm">R35mm — จำนวนวันที่ฝน ≥ 35 มม.</option>
-            <option value="R20mm">R20mm — จำนวนวันที่ฝน ≥ 20 มม.</option>
-            <option value="R50mm">R50mm — จำนวนวันที่ฝน ≥ 50 มม.</option>
-            <option value="PRCPTOT">PRCPTOT — ปริมาณฝนรวม</option>
-            <option value="R95p">R95p — ดัชนีฝนหนัก</option>
-            <option value="R99p">R99p — ดัชนีฝนหนักมาก</option>
-            <option value="R95pTOT">R95pTOT — ปริมาณฝนจากวันฝนหนัก</option>
-          </select>
-        </div>
+  <h3 id="mapTitle">RX3day — MAX</h3>
+  <div class="map-frame">
+    <img id="climateMap"
+         src="RX3day_December_2026_MAX_Styled.png"
+         alt="แผนที่ดัชนีฝนประเทศไทย">
+    <p id="mapStatus" class="status" role="status"></p>
+  </div>
+  <a id="openImage" class="button"
+     href="RX3day_December_2026_MAX_Styled.png"
+     target="_blank" rel="noopener noreferrer">เปิดภาพขนาดเต็ม</a>
+</section>
 
-        <div>
-          <label for="statSelect">วิธีสรุปผลรายจังหวัด</label>
-          <select id="statSelect">
-            <option value="MAX">MAX — ค่าสูงสุด</option>
-            <option value="P95">P95 — เปอร์เซ็นไทล์ที่ 95</option>
-          </select>
-        </div>
-      </div>
+<section class="card">
+  <h2>ตารางดัชนีฝนรายจังหวัด</h2>
+  <p>
+    ตารางนี้อ่านข้อมูลจากไฟล์ CSV ที่อัปโหลดไว้ใน GitHub
+    และกรองตามดัชนีและวิธีสรุปผลที่เลือกด้านบน
+  </p>
 
-      <h3 id="mapTitle">RX3day — MAX</h3>
+  <div class="controls">
+    <div>
+      <label for="provinceSearch">ค้นหาจังหวัด</label>
+      <input id="provinceSearch" type="search"
+             placeholder="พิมพ์ชื่อจังหวัดภาษาอังกฤษ">
+    </div>
+    <div>
+      <label for="sortSelect">เรียงข้อมูล</label>
+      <select id="sortSelect">
+        <option value="desc">ค่ามากไปน้อย</option>
+        <option value="asc">ค่าน้อยไปมาก</option>
+        <option value="name">ชื่อจังหวัด A–Z</option>
+      </select>
+    </div>
+  </div>
 
-      <div class="map-frame">
-        <img
-          id="climateMap"
-          src="RX3day_December_2026_MAX_Styled.png"
-          alt="แผนที่ดัชนีฝนประเทศไทย เดือนธันวาคม 2026"
-        >
-        <p id="mapStatus" role="status">
-          กำลังแสดงแผนที่จาก Repository
-        </p>
-      </div>
+  <p id="tableStatus" class="status" role="status">
+    กำลังโหลดข้อมูล CSV...
+  </p>
 
-      <a
-        id="openImage"
-        class="button"
-        href="RX3day_December_2026_MAX_Styled.png"
-        target="_blank"
-        rel="noopener noreferrer"
-      >เปิดภาพแผนที่ขนาดเต็ม</a>
-    </section>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>ลำดับ</th>
+          <th>จังหวัด</th>
+          <th>ดัชนี</th>
+          <th>จำนวนกริด</th>
+          <th id="valueHeader">MAX</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody">
+        <tr><td colspan="5">กำลังโหลดข้อมูล...</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
 
-    <section class="card">
-      <h2>การแปลผล</h2>
-      <ul>
-        <li>
-          RX3day, RX5day และ RX7day ใช้ศึกษาปริมาณฝนสะสมสูงสุด
-          ในช่วงเวลาต่อเนื่อง 3, 5 และ 7 วัน
-        </li>
-        <li>
-          R20mm, R35mm และ R50mm แสดงจำนวนวันที่ฝนถึงเกณฑ์
-          20, 35 และ 50 มิลลิเมตรต่อวัน ตามลำดับ
-        </li>
-        <li>
-          MAX และ P95 เป็นสถิติที่ใช้สรุปค่าตามวิธีประมวลผลเดิม
-          ไม่ใช่เปอร์เซ็นต์ความน่าจะเป็นที่จะเกิดน้ำท่วม
-        </li>
-      </ul>
-    </section>
+<section class="card">
+  <h2>การแปลผลและข้อจำกัด</h2>
+  <ul>
+    <li>RX3day, RX5day และ RX7day แสดงฝนสะสมสูงสุดในช่วง 3, 5 และ 7 วัน</li>
+    <li>R20mm, R35mm และ R50mm แสดงจำนวนวันที่ฝนถึงเกณฑ์ 20, 35 และ 50 มม./วัน</li>
+    <li>MAX และ P95 เป็นค่าสถิติ ไม่ใช่เปอร์เซ็นต์ความน่าจะเป็นที่จะเกิดน้ำท่วม</li>
+  </ul>
+  <p class="notice">
+    ผลนี้เป็นการประเมินฝนจากแบบจำลองภายใต้ SSP5-8.5
+    ไม่ใช่พยากรณ์อากาศรายวัน และไม่สามารถยืนยันว่าจะเกิดน้ำท่วมจริงได้
+    การประเมินน้ำท่วมต้องใช้ข้อมูลระดับน้ำ สภาพพื้นที่
+    การระบายน้ำ และข้อมูลน้ำท่วมประกอบ
+  </p>
+</section>
 
-    <section class="card">
-      <h2>ข้อจำกัดในการใช้ข้อมูล</h2>
-      <p class="notice">
-        แผนที่นี้เป็นผลการประเมินฝนจากแบบจำลองภายใต้สถานการณ์ SSP5-8.5
-        ไม่ใช่พยากรณ์อากาศรายวันเพื่อเตือนภัย และไม่สามารถยืนยันว่าจะเกิด
-        น้ำท่วมจริงได้ การประเมินน้ำท่วมต้องพิจารณาข้อมูลระดับน้ำ
-        สภาพพื้นที่ การระบายน้ำ และข้อมูลน้ำท่วมร่วมด้วย
-      </p>
-    </section>
+</main>
 
-  </main>
+<footer>Climate Projection Thailand · December 2026</footer>
 
-  <footer>
-    Climate Projection Thailand · December 2026
-  </footer>
+<script>
+const CSV_FILE = "Province_Indices_December_2026_MAX_P95.csv";
 
-  <script>
-    const indexSelect = document.getElementById("indexSelect");
-    const statSelect = document.getElementById("statSelect");
-    const climateMap = document.getElementById("climateMap");
-    const mapTitle = document.getElementById("mapTitle");
-    const mapStatus = document.getElementById("mapStatus");
-    const openImage = document.getElementById("openImage");
+const indexSelect = document.getElementById("indexSelect");
+const statSelect = document.getElementById("statSelect");
+const climateMap = document.getElementById("climateMap");
+const mapTitle = document.getElementById("mapTitle");
+const mapStatus = document.getElementById("mapStatus");
+const openImage = document.getElementById("openImage");
+const provinceSearch = document.getElementById("provinceSearch");
+const sortSelect = document.getElementById("sortSelect");
+const tableBody = document.getElementById("tableBody");
+const tableStatus = document.getElementById("tableStatus");
+const valueHeader = document.getElementById("valueHeader");
 
-    const indexNames = {
-      RX3day: "RX3day — ฝนสะสมสูงสุด 3 วัน",
-      RX5day: "RX5day — ฝนสะสมสูงสุด 5 วัน",
-      RX7day: "RX7day — ฝนสะสมสูงสุด 7 วัน",
-      R35mm: "R35mm — จำนวนวันที่ฝน ≥ 35 มม.",
-      R20mm: "R20mm — จำนวนวันที่ฝน ≥ 20 มม.",
-      R50mm: "R50mm — จำนวนวันที่ฝน ≥ 50 มม.",
-      PRCPTOT: "PRCPTOT — ปริมาณฝนรวม",
-      R95p: "R95p — ดัชนีฝนหนัก",
-      R99p: "R99p — ดัชนีฝนหนักมาก",
-      R95pTOT: "R95pTOT — ปริมาณฝนจากวันฝนหนัก"
-    };
+const indexNames = {
+  RX3day: "RX3day — ฝนสะสมสูงสุด 3 วัน",
+  RX5day: "RX5day — ฝนสะสมสูงสุด 5 วัน",
+  RX7day: "RX7day — ฝนสะสมสูงสุด 7 วัน",
+  R35mm: "R35mm — จำนวนวันที่ฝน ≥ 35 มม.",
+  R20mm: "R20mm — จำนวนวันที่ฝน ≥ 20 มม.",
+  R50mm: "R50mm — จำนวนวันที่ฝน ≥ 50 มม.",
+  PRCPTOT: "PRCPTOT — ปริมาณฝนรวม",
+  R95p: "R95p — ดัชนีฝนหนัก",
+  R99p: "R99p — ดัชนีฝนหนักมาก",
+  R95pTOT: "R95pTOT — ปริมาณฝนจากวันฝนหนัก"
+};
 
-    function updateMap() {
-      const index = indexSelect.value;
-      const stat = statSelect.value;
+let csvRows = [];
+let csvError = "";
 
-      const filename =
-        index + "_December_2026_" + stat + "_Styled.png";
+function updateMap() {
+  const index = indexSelect.value;
+  const stat = statSelect.value;
+  const filename = `${index}_December_2026_${stat}_Styled.png`;
 
-      climateMap.onerror = function () {
-        mapStatus.textContent =
-          "ไม่พบภาพไฟล์ " + filename +
-          " กรุณาตรวจสอบชื่อไฟล์ใน Repository";
-      };
+  mapTitle.textContent = `${indexNames[index]} — ${stat}`;
+  climateMap.onerror = () => {
+    mapStatus.textContent = `ไม่พบไฟล์ภาพ ${filename} กรุณาตรวจสอบชื่อไฟล์`;
+  };
+  climateMap.onload = () => {
+    mapStatus.textContent = `โหลดภาพสำเร็จ: ${filename}`;
+  };
+  climateMap.src = filename;
+  openImage.href = filename;
+}
 
-      climateMap.onload = function () {
-        mapStatus.textContent =
-          "โหลดภาพแผนที่สำเร็จ: " + filename;
-      };
+function parseCSV(text) {
+  const lines = text.replace(/^\uFEFF/, "").split(/\r?\n/).filter(line => line.trim() !== "");
+  if (!lines.length) return [];
 
-      climateMap.src = filename;
-      openImage.href = filename;
-      mapTitle.textContent =
-        indexNames[index] + " — " + stat;
+  function splitCSVLine(line) {
+    const result = [];
+    let value = "";
+    let quoted = false;
+
+    for (let i = 0; i < line.length; i++) {
+      const ch = line[i];
+
+      if (ch === '"' && quoted && line[i + 1] === '"') {
+        value += '"';
+        i++;
+      } else if (ch === '"') {
+        quoted = !quoted;
+      } else if (ch === "," && !quoted) {
+        result.push(value);
+        value = "";
+      } else {
+        value += ch;
+      }
+    }
+    result.push(value);
+    return result;
+  }
+
+  const headers = splitCSVLine(lines[0]).map(h => h.trim());
+  return lines.slice(1).map(line => {
+    const values = splitCSVLine(line);
+    const row = {};
+    headers.forEach((header, i) => row[header] = (values[i] ?? "").trim());
+    return row;
+  });
+}
+
+function renderTable() {
+  const index = indexSelect.value;
+  const stat = statSelect.value;
+  const query = provinceSearch.value.trim().toLowerCase();
+  const sort = sortSelect.value;
+
+  valueHeader.textContent = stat;
+  tableBody.replaceChildren();
+
+  if (csvError) {
+    tableStatus.textContent = csvError;
+    tableBody.innerHTML =
+      '<tr><td colspan="5">ไม่สามารถแสดงข้อมูลได้</td></tr>';
+    return;
+  }
+
+  let rows = csvRows.filter(row =>
+    row.Index === index &&
+    row.Province &&
+    row.Province.toLowerCase().includes(query)
+  );
+
+  rows.sort((a, b) => {
+    if (sort === "name") return a.Province.localeCompare(b.Province);
+    const av = Number(a[stat]);
+    const bv = Number(b[stat]);
+    return sort === "asc" ? av - bv : bv - av;
+  });
+
+  tableStatus.textContent =
+    `พบ ${rows.length} รายการ · ดัชนี ${index} · สถิติ ${stat}`;
+
+  if (!rows.length) {
+    const tr = document.createElement("tr");
+    const td = document.createElement("td");
+    td.colSpan = 5;
+    td.textContent = "ไม่พบข้อมูลสำหรับตัวเลือกนี้";
+    tr.appendChild(td);
+    tableBody.appendChild(tr);
+    return;
+  }
+
+  rows.forEach((row, i) => {
+    const tr = document.createElement("tr");
+    const values = [
+      i + 1,
+      row.Province,
+      row.Index,
+      row.Intersecting_Grid_Count,
+      row[stat]
+    ];
+
+    values.forEach(value => {
+      const td = document.createElement("td");
+      if (typeof value === "number") {
+        td.textContent = String(value);
+      } else {
+        td.textContent = value ?? "";
+      }
+      tr.appendChild(td);
+    });
+    tableBody.appendChild(tr);
+  });
+}
+
+async function loadCSV() {
+  try {
+    const response = await fetch(CSV_FILE);
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
     }
 
-    indexSelect.addEventListener("change", updateMap);
-    statSelect.addEventListener("change", updateMap);
+    const text = await response.text();
+    csvRows = parseCSV(text);
 
-    updateMap();
-  </script>
+    const required = [
+      "Province", "Index", "Intersecting_Grid_Count", "MAX", "P95"
+    ];
+
+    if (!csvRows.length ||
+        required.some(key => !(key in csvRows[0]))) {
+      throw new Error("ชื่อคอลัมน์ใน CSV ไม่ตรงกับที่เว็บไซต์ต้องการ");
+    }
+
+    renderTable();
+  } catch (error) {
+    csvError =
+      "โหลด CSV ไม่สำเร็จ กรุณาตรวจสอบว่าไฟล์ " + CSV_FILE +
+      " อยู่ใน Repository ระดับเดียวกับ index.html และ Commit แล้ว";
+    renderTable();
+  }
+}
+
+indexSelect.addEventListener("change", () => {
+  updateMap();
+  renderTable();
+});
+statSelect.addEventListener("change", () => {
+  updateMap();
+  renderTable();
+});
+provinceSearch.addEventListener("input", renderTable);
+sortSelect.addEventListener("change", renderTable);
+
+updateMap();
+loadCSV();
+</script>
 </body>
 </html>
