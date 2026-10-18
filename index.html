@@ -5,178 +5,279 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Climate Projection Thailand</title>
+
   <style>
+    * { box-sizing: border-box; }
+
     body {
       margin: 0;
-      font-family: Tahoma, sans-serif;
-      background: #f0f6fa;
-      color: #243447;
+      font-family: Tahoma, Arial, sans-serif;
+      background: #f1f5f9;
+      color: #233447;
+      line-height: 1.7;
     }
+
     header {
-      background: #124e78;
+      background: linear-gradient(135deg, #103c61, #087e8b);
       color: white;
       text-align: center;
-      padding: 45px 20px;
+      padding: 42px 20px;
     }
+
     header h1 {
-      margin-bottom: 10px;
+      margin: 0 0 8px;
+      font-size: clamp(25px, 4vw, 38px);
     }
-    main {
-      max-width: 1000px;
-      margin: 30px auto;
-      padding: 0 20px;
+
+    header p { margin: 5px 0; }
+
+    .container {
+      width: min(1100px, 94%);
+      margin: 28px auto;
     }
-    section {
+
+    .card {
       background: white;
       padding: 24px;
-      margin-bottom: 20px;
-      border-radius: 12px;
-      box-shadow: 0 2px 8px #00000010;
+      margin-bottom: 22px;
+      border-radius: 14px;
+      box-shadow: 0 3px 14px #18334d12;
     }
-    h2 {
-      color: #126782;
+
+    h2 { color: #126782; margin-top: 0; }
+
+    .notice {
+      background: #fff7df;
+      border-left: 5px solid #d59b20;
+      padding: 14px 18px;
+      border-radius: 8px;
     }
+
+    .controls {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin: 20px 0;
+    }
+
+    label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 6px;
+    }
+
+    select {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      background: white;
+      font: inherit;
+    }
+
+    .map-frame {
+      background: #f8fafc;
+      border: 1px solid #dbe5ed;
+      border-radius: 10px;
+      padding: 10px;
+      text-align: center;
+      min-height: 180px;
+    }
+
+    #climateMap {
+      display: block;
+      width: 100%;
+      height: auto;
+      max-height: 780px;
+      object-fit: contain;
+      margin: auto;
+    }
+
+    #mapStatus {
+      color: #526575;
+      font-size: 14px;
+      overflow-wrap: anywhere;
+    }
+
+    .button {
+      display: inline-block;
+      padding: 10px 16px;
+      background: #126782;
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      margin-top: 12px;
+    }
+
     footer {
       text-align: center;
-      padding: 20px;
-      color: #526575;
+      padding: 25px;
+      color: #64748b;
+    }
+
+    @media (max-width: 600px) {
+      .card { padding: 17px; }
+      header { padding: 30px 15px; }
     }
   </style>
 </head>
+
 <body>
   <header>
     <h1>Climate Projection Thailand</h1>
-    <p>ข้อมูลภาพฉายภูมิอากาศประเทศไทย</p>
+    <p>ระบบแสดงผลการประเมินฝนของประเทศไทย</p>
+    <p>เดือนธันวาคม 2026 | WRF-Chem | SSP5-8.5</p>
   </header>
 
-  <main>
-    <section>
+  <main class="container">
+
+    <section class="card">
       <h2>เกี่ยวกับโครงการ</h2>
       <p>
-        โครงการประเมินภาพฉายภูมิอากาศของประเทศไทย
-        เพื่อศึกษาการเปลี่ยนแปลงของปริมาณฝนและอุณหภูมิ
-        ภายใต้สถานการณ์การเปลี่ยนแปลงสภาพภูมิอากาศ
+        เว็บไซต์สำหรับนำเสนอผลการประเมินปริมาณฝนและดัชนีฝน
+        จากข้อมูลแบบจำลองภูมิอากาศ เพื่อช่วยศึกษาพื้นที่ที่ควรเฝ้าระวัง
+        และสนับสนุนการวิเคราะห์ความเสี่ยงที่เกี่ยวข้องกับฝนหนัก
       </p>
     </section>
 
-    <section>
-      <h2>ข้อมูลภูมิอากาศ</h2>
+    <section class="card">
+      <h2>แผนที่ดัชนีฝนประเทศไทย</h2>
+
+      <p>
+        เลือกดัชนีฝนและวิธีสรุปผลเพื่อดูแผนที่ที่อัปโหลดไว้ในระบบ
+      </p>
+
+      <div class="controls">
+        <div>
+          <label for="indexSelect">ดัชนีฝน</label>
+          <select id="indexSelect">
+            <option value="RX3day">RX3day — ฝนสะสมสูงสุด 3 วัน</option>
+            <option value="RX5day">RX5day — ฝนสะสมสูงสุด 5 วัน</option>
+            <option value="RX7day">RX7day — ฝนสะสมสูงสุด 7 วัน</option>
+            <option value="R35mm">R35mm — จำนวนวันที่ฝน ≥ 35 มม.</option>
+            <option value="R20mm">R20mm — จำนวนวันที่ฝน ≥ 20 มม.</option>
+            <option value="R50mm">R50mm — จำนวนวันที่ฝน ≥ 50 มม.</option>
+            <option value="PRCPTOT">PRCPTOT — ปริมาณฝนรวม</option>
+            <option value="R95p">R95p — ดัชนีฝนหนัก</option>
+            <option value="R99p">R99p — ดัชนีฝนหนักมาก</option>
+            <option value="R95pTOT">R95pTOT — ปริมาณฝนจากวันฝนหนัก</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="statSelect">วิธีสรุปผลรายจังหวัด</label>
+          <select id="statSelect">
+            <option value="MAX">MAX — ค่าสูงสุด</option>
+            <option value="P95">P95 — เปอร์เซ็นไทล์ที่ 95</option>
+          </select>
+        </div>
+      </div>
+
+      <h3 id="mapTitle">RX3day — MAX</h3>
+
+      <div class="map-frame">
+        <img
+          id="climateMap"
+          src="RX3day_December_2026_MAX_Styled.png"
+          alt="แผนที่ดัชนีฝนประเทศไทย เดือนธันวาคม 2026"
+        >
+        <p id="mapStatus" role="status">
+          กำลังแสดงแผนที่จาก Repository
+        </p>
+      </div>
+
+      <a
+        id="openImage"
+        class="button"
+        href="RX3day_December_2026_MAX_Styled.png"
+        target="_blank"
+        rel="noopener noreferrer"
+      >เปิดภาพแผนที่ขนาดเต็ม</a>
+    </section>
+
+    <section class="card">
+      <h2>การแปลผล</h2>
       <ul>
-        <li>ปริมาณฝนรายวันและรายเดือน</li>
-        <li>อุณหภูมิสูงสุด (Tmax)</li>
-        <li>อุณหภูมิต่ำสุด (Tmin)</li>
-        <li>อุณหภูมิเฉลี่ย (Mean Temperature)</li>
+        <li>
+          RX3day, RX5day และ RX7day ใช้ศึกษาปริมาณฝนสะสมสูงสุด
+          ในช่วงเวลาต่อเนื่อง 3, 5 และ 7 วัน
+        </li>
+        <li>
+          R20mm, R35mm และ R50mm แสดงจำนวนวันที่ฝนถึงเกณฑ์
+          20, 35 และ 50 มิลลิเมตรต่อวัน ตามลำดับ
+        </li>
+        <li>
+          MAX และ P95 เป็นสถิติที่ใช้สรุปค่าตามวิธีประมวลผลเดิม
+          ไม่ใช่เปอร์เซ็นต์ความน่าจะเป็นที่จะเกิดน้ำท่วม
+        </li>
       </ul>
     </section>
 
-    <section>
-      <h2>สถานการณ์ภูมิอากาศ</h2>
-      <p>SSP2-4.5 | SSP3-7.0 | SSP5-8.5</p>
-      <p>
-        พื้นที่นี้สามารถพัฒนาต่อเพื่อแสดงแผนที่
-        กราฟ และข้อมูลรายจังหวัดได้
+    <section class="card">
+      <h2>ข้อจำกัดในการใช้ข้อมูล</h2>
+      <p class="notice">
+        แผนที่นี้เป็นผลการประเมินฝนจากแบบจำลองภายใต้สถานการณ์ SSP5-8.5
+        ไม่ใช่พยากรณ์อากาศรายวันเพื่อเตือนภัย และไม่สามารถยืนยันว่าจะเกิด
+        น้ำท่วมจริงได้ การประเมินน้ำท่วมต้องพิจารณาข้อมูลระดับน้ำ
+        สภาพพื้นที่ การระบายน้ำ และข้อมูลน้ำท่วมร่วมด้วย
       </p>
     </section>
 
-    <section>
-      <h2>ผลการศึกษา</h2>
-      <p>อยู่ระหว่างการพัฒนาฐานข้อมูลและระบบแสดงผล</p>
-    </section>
   </main>
 
   <footer>
-    Climate Projection Thailand
+    Climate Projection Thailand · December 2026
   </footer>
-</body>
-</html>
 
-<!DOCTYPE html>
-<html lang="th">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Climate Projection Thailand</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: Tahoma, sans-serif;
-      background: #f0f6fa;
-      color: #243447;
-    }
-    header {
-      background: #124e78;
-      color: white;
-      text-align: center;
-      padding: 45px 20px;
-    }
-    header h1 {
-      margin-bottom: 10px;
-    }
-    main {
-      max-width: 1000px;
-      margin: 30px auto;
-      padding: 0 20px;
-    }
-    section {
-      background: white;
-      padding: 24px;
-      margin-bottom: 20px;
-      border-radius: 12px;
-      box-shadow: 0 2px 8px #00000010;
-    }
-    h2 {
-      color: #126782;
-    }
-    footer {
-      text-align: center;
-      padding: 20px;
-      color: #526575;
-    }
-  </style>
-</head>
-<body>
-  <header>
-    <h1>Climate Projection Thailand</h1>
-    <p>ข้อมูลภาพฉายภูมิอากาศประเทศไทย</p>
-  </header>
+  <script>
+    const indexSelect = document.getElementById("indexSelect");
+    const statSelect = document.getElementById("statSelect");
+    const climateMap = document.getElementById("climateMap");
+    const mapTitle = document.getElementById("mapTitle");
+    const mapStatus = document.getElementById("mapStatus");
+    const openImage = document.getElementById("openImage");
 
-  <main>
-    <section>
-      <h2>เกี่ยวกับโครงการ</h2>
-      <p>
-        โครงการประเมินภาพฉายภูมิอากาศของประเทศไทย
-        เพื่อศึกษาการเปลี่ยนแปลงของปริมาณฝนและอุณหภูมิ
-        ภายใต้สถานการณ์การเปลี่ยนแปลงสภาพภูมิอากาศ
-      </p>
-    </section>
+    const indexNames = {
+      RX3day: "RX3day — ฝนสะสมสูงสุด 3 วัน",
+      RX5day: "RX5day — ฝนสะสมสูงสุด 5 วัน",
+      RX7day: "RX7day — ฝนสะสมสูงสุด 7 วัน",
+      R35mm: "R35mm — จำนวนวันที่ฝน ≥ 35 มม.",
+      R20mm: "R20mm — จำนวนวันที่ฝน ≥ 20 มม.",
+      R50mm: "R50mm — จำนวนวันที่ฝน ≥ 50 มม.",
+      PRCPTOT: "PRCPTOT — ปริมาณฝนรวม",
+      R95p: "R95p — ดัชนีฝนหนัก",
+      R99p: "R99p — ดัชนีฝนหนักมาก",
+      R95pTOT: "R95pTOT — ปริมาณฝนจากวันฝนหนัก"
+    };
 
-    <section>
-      <h2>ข้อมูลภูมิอากาศ</h2>
-      <ul>
-        <li>ปริมาณฝนรายวันและรายเดือน</li>
-        <li>อุณหภูมิสูงสุด (Tmax)</li>
-        <li>อุณหภูมิต่ำสุด (Tmin)</li>
-        <li>อุณหภูมิเฉลี่ย (Mean Temperature)</li>
-      </ul>
-    </section>
+    function updateMap() {
+      const index = indexSelect.value;
+      const stat = statSelect.value;
 
-    <section>
-      <h2>สถานการณ์ภูมิอากาศ</h2>
-      <p>SSP2-4.5 | SSP3-7.0 | SSP5-8.5</p>
-      <p>
-        พื้นที่นี้สามารถพัฒนาต่อเพื่อแสดงแผนที่
-        กราฟ และข้อมูลรายจังหวัดได้
-      </p>
-    </section>
+      const filename =
+        index + "_December_2026_" + stat + "_Styled.png";
 
-    <section>
-      <h2>ผลการศึกษา</h2>
-      <p>อยู่ระหว่างการพัฒนาฐานข้อมูลและระบบแสดงผล</p>
-    </section>
-  </main>
+      climateMap.onerror = function () {
+        mapStatus.textContent =
+          "ไม่พบภาพไฟล์ " + filename +
+          " กรุณาตรวจสอบชื่อไฟล์ใน Repository";
+      };
 
-  <footer>
-    Climate Projection Thailand
-  </footer>
+      climateMap.onload = function () {
+        mapStatus.textContent =
+          "โหลดภาพแผนที่สำเร็จ: " + filename;
+      };
+
+      climateMap.src = filename;
+      openImage.href = filename;
+      mapTitle.textContent =
+        indexNames[index] + " — " + stat;
+    }
+
+    indexSelect.addEventListener("change", updateMap);
+    statSelect.addEventListener("change", updateMap);
+
+    updateMap();
+  </script>
 </body>
 </html>
